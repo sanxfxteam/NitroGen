@@ -45,7 +45,10 @@ class ModelClient:
         }
         
         self.socket.send(pickle.dumps(request))
-        response = pickle.loads(self.socket.recv())
+        try:
+            response = pickle.loads(self.socket.recv())
+        except zmq.Again:
+            raise RuntimeError(f"Connection to model server timed out after {self.timeout_ms/1000}s. Is 'scripts/serve.py' running?")
         
         if response["status"] != "ok":
             raise RuntimeError(f"Server error: {response.get('message', 'Unknown error')}")
@@ -57,7 +60,10 @@ class ModelClient:
         request = {"type": "reset"}
         
         self.socket.send(pickle.dumps(request))
-        response = pickle.loads(self.socket.recv())
+        try:
+            response = pickle.loads(self.socket.recv())
+        except zmq.Again:
+            raise RuntimeError(f"Connection to model server timed out after {self.timeout_ms/1000}s. Is 'scripts/serve.py' running?")
         
         if response["status"] != "ok":
             raise RuntimeError(f"Server error: {response.get('message', 'Unknown error')}")
@@ -69,7 +75,10 @@ class ModelClient:
         request = {"type": "info"}
         
         self.socket.send(pickle.dumps(request))
-        response = pickle.loads(self.socket.recv())
+        try:
+            response = pickle.loads(self.socket.recv())
+        except zmq.Again:
+            raise RuntimeError(f"Connection to model server timed out after {self.timeout_ms/1000}s. Is 'scripts/serve.py' running?")
         
         if response["status"] != "ok":
             raise RuntimeError(f"Server error: {response.get('message', 'Unknown error')}")
